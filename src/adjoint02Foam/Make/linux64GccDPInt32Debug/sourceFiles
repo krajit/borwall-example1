@@ -1,0 +1,10 @@
+SOURCE = \
+adjointBoundary/uniformFlow/adjointOutletPressureUniFvPatchScalarField/adjointOutletPressureUniFvPatchScalarField.C \
+adjointBoundary/uniformFlow/adjointOutletVelocityUniFvPatchVectorField/adjointOutletVelocityUniFvPatchVectorField.C \
+adjointBoundary/powerDissipation/adjointOutletVelocityPowerFvPatchVectorField/adjointOutletVelocityPowerFvPatchVectorField.C \
+adjointBoundary/powerDissipation/adjointOutletPressurePowerFvPatchScalarField/adjointOutletPressurePowerFvPatchScalarField.C \
+adjointBoundary/powerLoss/adjointOutletPressure/adjointOutletPressureFvPatchScalarField.C \
+adjointBoundary/powerLoss/adjointOutletVelocity/adjointOutletVelocityFvPatchVectorField.C \
+adjoint01Foam.C \
+
+# sources
