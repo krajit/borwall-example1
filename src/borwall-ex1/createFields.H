@@ -197,5 +197,17 @@ volScalarField sensitivity
     U & Ua
 );
 
+volVectorField gradAlpha
+(
+    IOobject
+    (
+	"gradAlpha",
+	runTime.timeName(),
+	mesh,
+	IOobject::NO_READ,
+	IOobject::NO_WRITE
+    ),
+    fvc::grad(alpha)
+);
 
 

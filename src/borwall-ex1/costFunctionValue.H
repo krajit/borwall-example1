@@ -1,5 +1,7 @@
 
-J = 0.0;
+gradAlpha = fvc::grad(alpha);
+
+J =  costLambda.value()*gSum(volField * (gradAlpha & gradAlpha) );
 // integrate in the boundary patches
 forAll(mesh.boundary(), patchi)
 {

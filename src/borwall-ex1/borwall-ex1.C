@@ -63,6 +63,9 @@ int main(int argc, char *argv[])
     scalar Jold = 0;
     scalar Jk = 0;
 
+    //scalar costLambda = 0.01;
+    dimensionedScalar costLambda  = dimensionedScalar("costLambda ", dimless * Foam::pow(dimLength,8), 0.01);
+
     // Compute cost function value
 #include "costFunctionValue.H"
 
@@ -73,9 +76,9 @@ int main(int argc, char *argv[])
     Info << "\nStarting time loop\n"
          << endl;
 
-         scalar changeInControl = 10.0;
+    scalar changeInControl = 10.0;
 
-    while (simple.loop() && (changeInControl> 1E-6))// && (gamma > tol))
+    while (simple.loop() && (changeInControl > 1E-6)) // && (gamma > tol))
     {
         Info << "Time = " << runTime.timeName() << nl << endl;
 
@@ -87,9 +90,9 @@ int main(int argc, char *argv[])
         for (int kk = 0; kk < 100; kk++)
         {
             U.storePrevIter();
-            #include "stateEquation.H"
-            #include "adjointEquation.H"
-//            scalar contError = gSum(Foam::pow(p - p.prevIter(), 2) * volField) / (gSum(Foam::pow(p.prevIter(), 2) * volField) + SMALL);
+#include "stateEquation.H"
+#include "adjointEquation.H"
+            //            scalar contError = gSum(Foam::pow(p - p.prevIter(), 2) * volField) / (gSum(Foam::pow(p.prevIter(), 2) * volField) + SMALL);
             scalar contError = gSum(Foam::pow(mag(U - U.prevIter()), 2) * volField) / (gSum(Foam::pow(mag(U.prevIter()), 2) * volField) + SMALL);
             if (contError < 0.001)
             {
@@ -108,7 +111,9 @@ int main(int argc, char *argv[])
 
         // calculate derivative^2 integrate(U . Ua dv). Why??
         scalar phip0 = gSum(volField *
-                            Foam::pow(Ua.internalField() & U.internalField(), 2));
+                            (Foam::pow(Ua.internalField() & U.internalField(), 2) +
+                             costLambda * Foam::pow(gradAlpha.internalField() & gradAlpha.internalField(), 2)));
+
 
         dimensionedScalar gd = dimensionedScalar("gd", dimless * dimTime / sqr(dimLength), 1.0);
 
@@ -125,17 +130,17 @@ int main(int argc, char *argv[])
             alpha.correctBoundaryConditions();
 
             // get new u
-        for (int kk = 0; kk < 100; kk++)
-        {
-            U.storePrevIter();
-            #include "stateEquation.H"
-            //scalar contError = gSum(Foam::pow(p - p.prevIter(), 2) * volField) / (gSum(Foam::pow(p.prevIter(), 2) * volField) + SMALL);
-            scalar contError = gSum(Foam::pow(mag(U - U.prevIter()), 2) * volField) / (gSum(Foam::pow(mag(U.prevIter()), 2) * volField) + SMALL);
-            if (contError < 0.001)
+            for (int kk = 0; kk < 100; kk++)
             {
-                break;
+                U.storePrevIter();
+#include "stateEquation.H"
+                //scalar contError = gSum(Foam::pow(p - p.prevIter(), 2) * volField) / (gSum(Foam::pow(p.prevIter(), 2) * volField) + SMALL);
+                scalar contError = gSum(Foam::pow(mag(U - U.prevIter()), 2) * volField) / (gSum(Foam::pow(mag(U.prevIter()), 2) * volField) + SMALL);
+                if (contError < 0.001)
+                {
+                    break;
+                }
             }
-        }
 
 // get new cost
 #include "costFunctionValue.H"
@@ -156,7 +161,6 @@ int main(int argc, char *argv[])
         file.open("results.csv", std::ios::app);
         file << runTime.value() << "," << J << nl;
         file.close();
-
 
         sensitivity = U & Ua;
 
