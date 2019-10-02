@@ -16,6 +16,11 @@ FoamFile
 
 dimensions      [0 0 -1 0 0 0 0];
 
+// Da = nu/(alphaMax* L^2)
+// For solid like region Da = 1e-5 to 1e-6
+
+// alphaMax = nu/(L^2 * Da)
+
 
 internalField   uniform 1.0;
 

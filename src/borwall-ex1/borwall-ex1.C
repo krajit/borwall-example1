@@ -111,8 +111,9 @@ int main(int argc, char *argv[])
 
         // calculate derivative^2 integrate(U . Ua dv). Why??
         scalar phip0 = gSum(volField *
-                            (Foam::pow(Ua.internalField() & U.internalField(), 2) +
-                             costLambda * (pow(mag(alpha.internalField()),2))));
+                            (Foam::pow(Ua.internalField() & U.internalField(), 2) 
+                            //+ costLambda * (pow(mag(alpha.internalField()),2))
+                             ));
 
 
         dimensionedScalar gd = dimensionedScalar("gd", dimless * dimTime / sqr(dimLength), 1.0);
