@@ -1,0 +1,10 @@
+SOURCE = \
+adjointBoundary/uniformFlow/adjointOutletPressureUniFvPatchScalarField/adjointOutletPressureUniFvPatchScalarField.C \
+adjointBoundary/uniformFlow/adjointOutletVelocityUniFvPatchVectorField/adjointOutletVelocityUniFvPatchVectorField.C \
+adjointBoundary/powerDissipation/adjointOutletVelocityPowerFvPatchVectorField/adjointOutletVelocityPowerFvPatchVectorField.C \
+adjointBoundary/powerDissipation/adjointOutletPressurePowerFvPatchScalarField/adjointOutletPressurePowerFvPatchScalarField.C \
+adjointBoundary/pressureLoss/adjointOutletPressure/adjointOutletPressureFvPatchScalarField.C \
+adjointBoundary/pressureLoss/adjointOutletVelocity/adjointOutletVelocityFvPatchVectorField.C \
+borwall-ex1-densityBased.C \
+
+# sources
