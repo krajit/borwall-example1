@@ -64,7 +64,7 @@ int main(int argc, char *argv[])
     scalar Jk = 0;
 
     //scalar costLambda = 0.01;
-    dimensionedScalar costLambda  = dimensionedScalar("costLambda ", dimless * Foam::pow(dimLength,4)/sqr(dimTime), 0.001);
+    dimensionedScalar costLambda = dimensionedScalar("costLambda ", dimless * Foam::pow(dimLength, 4) / sqr(dimTime), 0.1);
 
     // Compute cost function value
 #include "costFunctionValue.H"
@@ -82,7 +82,7 @@ int main(int argc, char *argv[])
     {
         Info << "Time = " << runTime.timeName() << nl << endl;
 
-        alpha.storePrevIter();
+        rho.storePrevIter();
 
         // save old cost value
         Jold = J;
@@ -90,58 +90,75 @@ int main(int argc, char *argv[])
         for (int kk = 0; kk < 100; kk++)
         {
             U.storePrevIter();
-#include "stateEquation.H"
-#include "adjointEquation.H"
+            p.storePrevIter();
+
+            #include "stateEquation.H"
+
             //            scalar contError = gSum(Foam::pow(p - p.prevIter(), 2) * volField) / (gSum(Foam::pow(p.prevIter(), 2) * volField) + SMALL);
             scalar contError = gSum(Foam::pow(mag(U - U.prevIter()), 2) * volField) / (gSum(Foam::pow(mag(U.prevIter()), 2) * volField) + SMALL);
-            if (contError < 0.001)
+            if (contError < 1e-6)
             {
                 break;
             }
         }
 
+        for (int kk = 0; kk < 100; kk++)
+        {
+            Ua.storePrevIter();
+            pa.storePrevIter();
+
+            #include "adjointEquation.H"
+            //scalar contError = gSum(Foam::pow(pa - pa.prevIter(), 2) * volField) / (gSum(Foam::pow(pa.prevIter(), 2) * volField) + SMALL);
+            scalar contError = gSum(Foam::pow(mag(Ua - Ua.prevIter()), 2) * volField) / (gSum(Foam::pow(mag(Ua.prevIter()), 2) * volField) + SMALL);
+            if (contError < 1e-6)
+            {
+                break;
+            }
+        }
+
+
         // Save current control
-        alphak = alpha;
+        rhok = rho;
 
 // calculate current cost
 #include "costFunctionValue.H"
         Jk = J;
+        sensitivity = (U & Ua) * dAlphaDRho;
+        sensitivityk = sensitivity;
 
         bool gammaFound = false;
 
         // calculate derivative^2 integrate(U . Ua dv). Why??
-        scalar phip0 = gSum(volField *
-                            (Foam::pow(Ua.internalField() & U.internalField(), 2) 
-                            //+ costLambda * (pow(mag(alpha.internalField()),2))
-                             ));
+        scalar phip0 = gSum(volField * (Foam::pow(sensitivity, 2)));
 
-
-        dimensionedScalar gd = dimensionedScalar("gd", dimless * dimTime / sqr(dimLength), 1.0);
+        dimensionedScalar gd = dimensionedScalar("gd", pow(dimTime, 3) / pow(dimLength, 2), 1.0);
 
         while ((!gammaFound) && (gamma > tol))
         {
-            alpha = alpha - gamma * gd * (Ua & U);
 
-            // truncate u for constrained control set
-            forAll(alpha, i)
-            {
-                alpha[i] = min(alpha[i], alphaMax[i]);
-                alpha[i] = max(alpha[i], alphaMin[i]);
-            }
+            rho = min(max(rhok - gamma * gd * sensitivityk, 1e-8), 1.0);
+            rho.correctBoundaryConditions();
+
+            alpha = alphaAbsMax + (alphaAbsMin - alphaAbsMax) * rho * (1.0 + q) / (rho + q);
             alpha.correctBoundaryConditions();
 
-            rho = q*(alpha - alphaAbsMax)/( (alphaAbsMin - alphaAbsMax)*(1 + q) - (alpha - alphaAbsMax));
+            dAlphaDRho = q * (alphaAbsMin - alphaAbsMax) * (1.0 + q) / pow(rho + q, 2);
 
             // get new u
             for (int kk = 0; kk < 100; kk++)
             {
                 U.storePrevIter();
-#include "stateEquation.H"
-                //scalar contError = gSum(Foam::pow(p - p.prevIter(), 2) * volField) / (gSum(Foam::pow(p.prevIter(), 2) * volField) + SMALL);
-                scalar contError = gSum(Foam::pow(mag(U - U.prevIter()), 2) * volField) / (gSum(Foam::pow(mag(U.prevIter()), 2) * volField) + SMALL);
-                if (contError < 0.001)
+                #include "stateEquation.H"
+                //scalar contError = gSum(Foam::pow(pa - pa.prevIter(), 2) * volField) / (gSum(Foam::pow(pa.prevIter(), 2) * volField) + SMALL);
+                scalar contError = gSum(Foam::pow(mag(Ua - Ua.prevIter()), 2) * volField) / (gSum(Foam::pow(mag(Ua.prevIter()), 2) * volField) + SMALL);
+
+                if (kk >= 2)
                 {
-                    break;
+
+                    if (contError < 1e-6)
+                    {
+                        break;
+                    }
                 }
             }
 
@@ -165,13 +182,11 @@ int main(int argc, char *argv[])
         file << runTime.value() << "," << J << nl;
         file.close();
 
-        sensitivity = U & Ua;
-
         runTime.write();
 
         runTime.printExecutionTime(Info);
 
-        changeInControl = gSum(Foam::pow(mag(alpha - alphak), 1) * volField) / (gSum(Foam::pow(mag(alphak), 1) * volField) + SMALL);
+        changeInControl = gSum(Foam::pow(mag(rho - rhok), 1) * volField) / (gSum(Foam::pow(mag(rhok), 1) * volField) + SMALL);
         Info << "change in control = " << changeInControl << endl;
     }
 

@@ -138,7 +138,7 @@ volScalarField alpha
     mesh//alphaAbsMax + (alphaAbsMin - alphaAbsMax)*rho*(1.0 + q)/(rho + q)
 );
 
-dimensionedScalar q("q",dimless, 0.01);
+dimensionedScalar q("q",dimless, 0.001);
 dimensionedScalar alphaAbsMin("alphaAbsMin",alpha.dimensions(), 0.0001);
 dimensionedScalar alphaAbsMax("alphaAbsMax",alpha.dimensions(), 1);
 

@@ -120,14 +120,12 @@ int main(int argc, char *argv[])
 
         while ((!gammaFound) && (gamma > tol))
         {
-            alpha = alpha - gamma * gd * (Ua & U);
 
-            // truncate u for constrained control set
-            forAll(alpha, i)
-            {
-                alpha[i] = min(alpha[i], alphaMax[i]);
-                alpha[i] = max(alpha[i], alphaMin[i]);
-            }
+            dimensionedScalar alMin("alMin", dimless/dimTime, 1e-8);
+            dimensionedScalar alMax("alMax", dimless/dimTime, 1.0);
+
+            alpha = min(max(alpha - gamma * gd * (Ua & U),alMin),alMax);
+
             alpha.correctBoundaryConditions();
 
             rho = q*(alpha - alphaAbsMax)/( (alphaAbsMin - alphaAbsMax)*(1 + q) - (alpha - alphaAbsMax));

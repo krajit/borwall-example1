@@ -1,0 +1,4 @@
+SOURCE = \
+testSimpleFoam.C \
+
+# sources

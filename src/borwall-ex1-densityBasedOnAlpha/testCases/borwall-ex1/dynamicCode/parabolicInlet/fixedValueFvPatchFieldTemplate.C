@@ -51,11 +51,11 @@ namespace Foam
 extern "C"
 {
     // dynamicCode:
-    // SHA1 = 55f9e0c59db90711cbd8fd8a33cb506e13a7643e
+    // SHA1 = a6a19119021ba8bf5541279198c86c9533e3193c
     //
     // unique function name that can be checked if the correct library version
     // has been loaded
-    void parabolicInlet_55f9e0c59db90711cbd8fd8a33cb506e13a7643e(bool load)
+    void parabolicInlet_a6a19119021ba8bf5541279198c86c9533e3193c(bool load)
     {
         if (load)
         {
@@ -78,7 +78,7 @@ makeRemovablePatchTypeField
 
 
 const char* const parabolicInletFixedValueFvPatchVectorField::SHA1sum =
-    "55f9e0c59db90711cbd8fd8a33cb506e13a7643e";
+    "a6a19119021ba8bf5541279198c86c9533e3193c";
 
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
@@ -94,7 +94,7 @@ parabolicInletFixedValueFvPatchVectorField
 {
     if (false)
     {
-        Info<<"construct parabolicInlet sha1: 55f9e0c59db90711cbd8fd8a33cb506e13a7643e"
+        Info<<"construct parabolicInlet sha1: a6a19119021ba8bf5541279198c86c9533e3193c"
             " from patch/DimensionedField\n";
     }
 }
@@ -113,7 +113,7 @@ parabolicInletFixedValueFvPatchVectorField
 {
     if (false)
     {
-        Info<<"construct parabolicInlet sha1: 55f9e0c59db90711cbd8fd8a33cb506e13a7643e"
+        Info<<"construct parabolicInlet sha1: a6a19119021ba8bf5541279198c86c9533e3193c"
             " from patch/DimensionedField/mapper\n";
     }
 }
@@ -131,7 +131,7 @@ parabolicInletFixedValueFvPatchVectorField
 {
     if (false)
     {
-        Info<<"construct parabolicInlet sha1: 55f9e0c59db90711cbd8fd8a33cb506e13a7643e"
+        Info<<"construct parabolicInlet sha1: a6a19119021ba8bf5541279198c86c9533e3193c"
             " from patch/dictionary\n";
     }
 }
@@ -147,7 +147,7 @@ parabolicInletFixedValueFvPatchVectorField
 {
     if (false)
     {
-        Info<<"construct parabolicInlet sha1: 55f9e0c59db90711cbd8fd8a33cb506e13a7643e"
+        Info<<"construct parabolicInlet sha1: a6a19119021ba8bf5541279198c86c9533e3193c"
             " as copy\n";
     }
 }
@@ -164,7 +164,7 @@ parabolicInletFixedValueFvPatchVectorField
 {
     if (false)
     {
-        Info<<"construct parabolicInlet sha1: 55f9e0c59db90711cbd8fd8a33cb506e13a7643e "
+        Info<<"construct parabolicInlet sha1: a6a19119021ba8bf5541279198c86c9533e3193c "
             "as copy/DimensionedField\n";
     }
 }
@@ -177,7 +177,7 @@ parabolicInletFixedValueFvPatchVectorField::
 {
     if (false)
     {
-        Info<<"destroy parabolicInlet sha1: 55f9e0c59db90711cbd8fd8a33cb506e13a7643e\n";
+        Info<<"destroy parabolicInlet sha1: a6a19119021ba8bf5541279198c86c9533e3193c\n";
     }
 }
 
@@ -193,7 +193,7 @@ void parabolicInletFixedValueFvPatchVectorField::updateCoeffs()
 
     if (false)
     {
-        Info<<"updateCoeffs parabolicInlet sha1: 55f9e0c59db90711cbd8fd8a33cb506e13a7643e\n";
+        Info<<"updateCoeffs parabolicInlet sha1: a6a19119021ba8bf5541279198c86c9533e3193c\n";
     }
 
 //{{{ begin code
@@ -205,7 +205,7 @@ vectorField faceCenters(this->patch().Cf());
             {
                 scalar yi = faceCenters[faceI].y();
 
-                inletVal[faceI].x() = 0.1*4*yi*(1-yi);
+                inletVal[faceI].x() = 0.03*4*yi*(1-yi);
             }
             operator==(inletVal);
 //}}} end code

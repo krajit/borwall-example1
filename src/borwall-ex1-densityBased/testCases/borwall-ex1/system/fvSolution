@@ -36,10 +36,19 @@ solvers
 }
 
 SIMPLE
+//PISO
 {
     nNonOrthogonalCorrectors 0;
     pRefCell 0;
     pRefValue 0;
+
+//   residualControl
+//     {
+//         p               1e-2;
+//         U               1e-3;
+//         "(k|epsilon|omega)" 1e-3;
+//     }
+
 }
 
 relaxationFactors

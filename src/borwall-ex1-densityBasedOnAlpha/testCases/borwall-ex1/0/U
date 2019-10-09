@@ -34,7 +34,7 @@ boundaryField
             {
                 scalar yi = faceCenters[faceI].y();
 
-                inletVal[faceI].x() = 0.1*4*yi*(1-yi);
+                inletVal[faceI].x() = 0.03*4*yi*(1-yi);
             }
             operator==(inletVal);
         #};
